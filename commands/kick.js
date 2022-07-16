@@ -15,6 +15,8 @@ module.exports = {
         .setDescription("reason for kicking user")
     ),
   async execute(interaction) {
+    await interaction.deferReply({ ephemeral: true });
+
     const user = interaction.options.getUser("user");
     const member = interaction.guild.members.resolve(user);
 
@@ -34,6 +36,6 @@ module.exports = {
 
     await member.kick({ reason });
 
-    interaction.reply(`Kicked ${user} AKA ${user.tag}`);
+    interaction.editReply(`Kicked ${user.tag}`);
   }
 };
