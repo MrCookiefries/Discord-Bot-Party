@@ -17,25 +17,25 @@ module.exports = {
   async execute(interaction) {
     await interaction.deferReply({ ephemeral: true });
 
+    if (!interaction.member.permissions.has(Permissions.FLAGS.KICK_MEMBERS)) {
+      return interaction.editReply("You're not allowed to kick");
+    }
+
     const user = interaction.options.getUser("user");
     const member = interaction.guild.members.resolve(user);
 
     if (!member) {
-      return interaction.reply(`User ${user} not found`);
+      return interaction.editReply(`${user} not found`);
     }
 
     if (!member.kickable) {
-      return interaction.reply(`${user.tag} cannot be kicked`);
-    }
-
-    if (!interaction.member.permissions.has(Permissions.FLAGS.KICK_MEMBERS)) {
-      return interaction.reply("You're not allowed to kick");
+      return interaction.editReply(`${member.user.tag} cannot be kicked`);
     }
 
     const reason = interaction.options.getString("reason") || "they were bad";
 
     await member.kick({ reason });
 
-    interaction.editReply(`Kicked ${user.tag}`);
+    interaction.editReply(`Kicked ${member.user.tag}`);
   }
 };

@@ -17,25 +17,25 @@ module.exports = {
   async execute(interaction) {
     await interaction.deferReply({ ephemeral: true });
 
+    if (!interaction.member.permissions.has(Permissions.FLAGS.BAN_MEMBERS)) {
+      return interaction.editReply("You're not allowed to ban");
+    }
+
     const user = interaction.options.getUser("user");
     const member = interaction.guild.members.resolve(user);
 
     if (!member) {
-      return interaction.reply(`User ${user} not found`);
+      return interaction.editReply(`${user} not found`);
     }
 
     if (!member.bannable) {
-      return interaction.reply(`${user.tag} cannot be banned`);
-    }
-
-    if (!interaction.member.permissions.has(Permissions.FLAGS.BAN_MEMBERS)) {
-      return interaction.reply("You're not allowed to ban");
+      return interaction.editReply(`${member.user.tag} cannot be banned`);
     }
 
     const reason = interaction.options.getString("reason") || "they were bad";
 
     await member.ban({ reason });
 
-    interaction.editReply(`Banned ${user.tag}`);
+    interaction.editReply(`Banned ${member.user.tag}`);
   }
 };
